@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "target": "ES2021",
+      "module": "CommonJS",
+      "moduleResolution": "Node",
+      "outDir": "cdkdist",
+      "rootDir": "./",
+      "strict": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["index.ts", "static-site.ts"]
+  }
+  
