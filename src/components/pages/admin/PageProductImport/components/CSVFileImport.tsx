@@ -30,7 +30,8 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
     }
   
     console.log("Starting file upload to", url);
-  
+    const token = localStorage.getItem('authorization_token');
+    console.log(`Token: ${token}`);
     try {
       // Get the presigned URL from the backend Lambda
       const response = await axios({
@@ -39,7 +40,17 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
         params: {
           name: encodeURIComponent(file.name), // File name is passed to the API to generate a signed URL
         },
+        headers: {
+          Authorization: `${token}`,
+        },
       });
+
+      console.log('Response from lambda' + JSON.stringify(response));
+      if (response.status === 401) {
+        alert('Unauthorized: Please provide valid credentials.');
+      } else if (response.status === 403) {
+        alert('Forbidden: Access denied.');
+      }
   
       // Check if we got the URL
       if (!response.data || !response.data.signedUrl) {
@@ -67,7 +78,18 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   
       // Reset the file input
       setFile(undefined);
-    } catch (error) {
+    } catch (error: any) {
+      // Axios wraps errors, so use error.response to access the API error
+      console.log(JSON.stringify(error))
+      if (error.response) {
+        if (error.response.status === 403) {
+          alert("Access denied! You do not have permission to access this resource.");
+        } else {
+          alert(`Unauthorized`);
+        }
+      } else {
+         alert("Network or server error occurred.");
+      }
       console.error("Error uploading file:", error);
     }
   };
