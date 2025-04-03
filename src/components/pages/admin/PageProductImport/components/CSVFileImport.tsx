@@ -28,10 +28,7 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
       console.error("No file selected!");
       return;
     }
-  
-    console.log("Starting file upload to", url);
-    const token = localStorage.getItem('authorization_token');
-    console.log(`Token: ${token}`);
+
     try {
       // Get the presigned URL from the backend Lambda
       const response = await axios({
@@ -41,7 +38,7 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
           name: encodeURIComponent(file.name), // File name is passed to the API to generate a signed URL
         },
         headers: {
-          Authorization: `${token}`,
+          Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
         },
       });
 
